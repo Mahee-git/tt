@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Paddock // Table Tennis Championship</title>
+    <title>Table Tennis Championship</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -15,7 +15,6 @@
         .font-mono-num {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* Custom scrollbar for horizontal tree scrolling */
         ::-webkit-scrollbar {
             height: 8px;
             width: 8px;
@@ -31,7 +30,7 @@
             background: #E10600;
         }
         .f1-card {
-            background: #12161F;
+            background: #131722;
             border: 1px solid #1E2330;
             transition: all 0.2s ease;
         }
@@ -55,25 +54,22 @@
         </div>
 
         <div class="flex items-center gap-3">
-            <button onclick="openSheetsModal()" class="bg-[#1E2330] hover:bg-slate-800 text-slate-300 px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border border-slate-700">
-                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg>
-                Google Sheets Sync
-            </button>
-            <button onclick="toggleAdminModal()" id="adminNavBtn" class="bg-[#E10600] hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition shadow-lg shadow-red-900/30">
+            <button onclick="openAdminModal()" id="adminNavBtn" class="bg-[#E10600] hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition shadow-lg shadow-red-900/30 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 Admin Control
             </button>
         </div>
     </header>
 
     <main class="flex-1 p-6 overflow-x-auto">
-        <div class="min-w-[1300px] pb-12">
+        <div class="min-w-[1350px] pb-12">
             <!-- Round Headers -->
             <div class="grid grid-cols-5 gap-6 mb-6 text-center text-xs font-bold tracking-widest text-slate-400 uppercase">
-                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Round 1 <span class="text-[#E10600]">9 Matches</span></div>
-                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Playoffs <span class="text-[#E10600]">2 Matches</span></div>
-                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Quarter-finals <span class="text-[#E10600]">4 Matches</span></div>
-                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Semi-finals <span class="text-[#E10600]">2 Matches</span></div>
-                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Grand Final 🏆 <span class="text-[#E10600]">1 Match</span></div>
+                <div class="bg-[#131722] py-2.5 rounded-lg border border-[#1E2330]">Round 1 <span class="text-[#E10600]">9 Matches</span></div>
+                <div class="bg-[#131722] py-2.5 rounded-lg border border-[#1E2330]">Playoffs <span class="text-[#E10600]">2 Matches</span></div>
+                <div class="bg-[#131722] py-2.5 rounded-lg border border-[#1E2330]">Quarter-finals <span class="text-[#E10600]">4 Matches</span></div>
+                <div class="bg-[#131722] py-2.5 rounded-lg border border-[#1E2330]">Semi-finals <span class="text-[#E10600]">2 Matches</span></div>
+                <div class="bg-[#131722] py-2.5 rounded-lg border border-[#1E2330]">Grand Final 🏆 <span class="text-[#E10600]">1 Match</span></div>
             </div>
 
             <!-- Tournament Grid Columns -->
@@ -93,67 +89,38 @@
     </main>
 
     <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#12161F] border border-[#1E2330] rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
-            <button onclick="toggleAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+        <div class="bg-[#131722] border border-[#1E2330] rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
             <div id="loginView">
                 <h3 class="text-lg font-bold text-white mb-2">Paddock Admin Authentication</h3>
-                <p class="text-slate-400 text-xs mb-4">Enter master passcode to unlock match score and winner updates.</p>
+                <p class="text-slate-400 text-xs mb-4">Enter master passcode to unlock match editing and team management.</p>
                 <input type="password" id="passInput" placeholder="Enter password (admin123)" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#E10600] mb-4">
                 <button onclick="authenticateAdmin()" class="w-full bg-[#E10600] hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition">Authenticate</button>
             </div>
             <div id="adminActiveView" class="hidden">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <h3 class="text-lg font-bold text-white">Admin Mode Active</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <h3 class="text-base font-bold text-white">Admin Control Active</h3>
+                    </div>
+                    <button onclick="resetTournament()" class="bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/50 text-[11px] font-semibold px-2.5 py-1 rounded transition">Reset Bracket</button>
                 </div>
-                <p class="text-slate-300 text-xs mb-4">You can now click on any match card on the bracket to set scores or select winners. Changes cascade instantly through the knockout tree.</p>
+                <p class="text-slate-300 text-xs mb-4">Click on any match card on the bracket to update team names, scores, and cascade winners instantly.</p>
                 <button onclick="logoutAdmin()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-lg text-sm transition">Lock Admin Mode</button>
             </div>
         </div>
     </div>
 
-    <div id="sheetsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#12161F] border border-[#1E2330] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <button onclick="openSheetsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
-            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg>
-                Google Sheets Integration Guide
-            </h3>
-            <p class="text-slate-400 text-xs mb-4">Connect this web app to your live Google Sheet for automated score synchronization.</p>
-            
-            <div class="space-y-3 text-xs text-slate-300 mb-6">
-                <div class="bg-[#0B0E14] p-3 rounded-lg border border-[#1E2330]">
-                    <span class="font-bold text-[#E10600]">Step 1:</span> Create a Google Sheet with columns: <code class="text-emerald-400">MatchID, TeamA, TeamB, ScoreA, ScoreB, Winner</code>.
-                </div>
-                <div class="bg-[#0B0E14] p-3 rounded-lg border border-[#1E2330]">
-                    <span class="font-bold text-[#E10600]">Step 2:</span> Publish your sheet as CSV (`File > Share > Publish to web > CSV`).
-                </div>
-                <div class="bg-[#0B0E14] p-3 rounded-lg border border-[#1E2330]">
-                    <span class="font-bold text-[#E10600]">Step 3:</span> Paste your CSV URL below to sync live telemetry data on load.
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <input type="text" id="csvUrlInput" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                <div class="flex gap-2">
-                    <button onclick="syncGoogleSheets()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs transition">Fetch Sheet Data</button>
-                    <button onclick="openSheetsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="matchModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#12161F] border border-[#1E2330] rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
-            <button onclick="closeMatchModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+        <div class="bg-[#131722] border border-[#1E2330] rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
+            <button onclick="closeMatchModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
             <h3 id="modalMatchTitle" class="text-base font-bold text-white mb-4">Edit Match Telemetry</h3>
             <div id="modalMatchContent" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
-        // Tournament Matches Database State
-        const matches = {
+        const initialMatches = {
             // Round 1 (9 Matches)
             'r1_1': { id: 'r1_1', round: 'r1', label: 'Match 1', date: 'Oct 10', teamA: 'Nur Mohammad - Shipon', teamB: 'Shefat - Nasrullah', scoreA: '', scoreB: '', winner: '', next: 'qf_1', nextSlot: 'teamA' },
             'r1_2': { id: 'r1_2', round: 'r1', label: 'Match 2', date: 'Oct 10', teamA: 'Nadim - Rasel', teamB: 'Tawhaa - Siam', scoreA: '', scoreB: '', winner: '', next: 'qf_1', nextSlot: 'teamB' },
@@ -183,8 +150,14 @@
             'fn_1': { id: 'fn_1', round: 'fn', label: 'Grand Final 🏆', date: 'Oct 18', teamA: 'Winner SF 1', teamB: 'Winner SF 2', scoreA: '', scoreB: '', winner: '', next: null, nextSlot: null }
         };
 
-        let isAdmin = false;
+        let matches = JSON.parse(localStorage.getItem('f1_tt_matches')) || initialMatches;
+        let isAdmin = JSON.parse(localStorage.getItem('f1_tt_isAdmin')) || false;
         let activeEditMatchId = null;
+
+        function saveState() {
+            localStorage.setItem('f1_tt_matches', JSON.stringify(matches));
+            localStorage.setItem('f1_tt_isAdmin', JSON.stringify(isAdmin));
+        }
 
         function renderBracket() {
             const columns = {
@@ -202,7 +175,7 @@
                 const isFinished = m.winner !== '';
                 const isFacultyMatch = m.id === 'qf_4';
 
-                card.className = `f1-card rounded-xl p-3.5 relative cursor-pointer ${isFacultyMatch ? 'border-amber-500/40 bg-gradient-to-r from-[#12161F] to-amber-950/20' : ''}`;
+                card.className = `f1-card rounded-xl p-3.5 relative cursor-pointer ${isFacultyMatch ? 'border-amber-500/40 bg-gradient-to-r from-[#131722] to-amber-950/20' : ''}`;
                 card.onclick = () => handleCardClick(m.id);
 
                 card.innerHTML = `
@@ -230,7 +203,7 @@
                     </div>
                     ${isAdmin ? `
                         <div class="mt-2.5 pt-2 border-t border-[#1E2330] flex justify-between items-center text-[10px] text-[#E10600] font-bold">
-                            <span>[ EDIT TELEMETRY ]</span>
+                            <span>[ EDIT MATCH ]</span>
                             <span>⚡</span>
                         </div>
                     ` : ''}
@@ -240,11 +213,23 @@
                     columns[m.round].appendChild(card);
                 }
             });
+
+            if (isAdmin) {
+                document.getElementById('adminNavBtn').innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Admin Active
+                `;
+            } else {
+                document.getElementById('adminNavBtn').innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Admin Control
+                `;
+            }
         }
 
         function handleCardClick(matchId) {
             if (!isAdmin) {
-                showToast("Switch to Admin Mode to update match scores and winners.");
+                showToast("Switch to Admin Mode to update team names, scores, and winners.");
                 return;
             }
             activeEditMatchId = matchId;
@@ -253,24 +238,32 @@
             
             const content = document.getElementById('modalMatchContent');
             content.innerHTML = `
-                <div class="space-y-3">
+                <div class="space-y-3.5">
                     <div>
-                        <label class="text-xs text-slate-400 block mb-1">Team A: <span class="text-white font-medium">${m.teamA}</span></label>
-                        <input type="number" id="editScoreA" value="${m.scoreA}" placeholder="Score A" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#E10600]">
+                        <label class="text-[11px] text-slate-400 block mb-1 font-semibold uppercase tracking-wider">Team A Name</label>
+                        <input type="text" id="editTeamA" value="${m.teamA}" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E10600]">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 block mb-1">Team B: <span class="text-white font-medium">${m.teamB}</span></label>
-                        <input type="number" id="editScoreB" value="${m.scoreB}" placeholder="Score B" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#E10600]">
+                        <label class="text-[11px] text-slate-400 block mb-1 font-semibold uppercase tracking-wider">Team A Score</label>
+                        <input type="number" id="editScoreA" value="${m.scoreA}" placeholder="Score A" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E10600]">
+                    </div>
+                    <div class="border-t border-[#1E2330] pt-3">
+                        <label class="text-[11px] text-slate-400 block mb-1 font-semibold uppercase tracking-wider">Team B Name</label>
+                        <input type="text" id="editTeamB" value="${m.teamB}" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E10600]">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 block mb-1">Select Winner</label>
-                        <select id="editWinner" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#E10600]">
-                            <option value="">-- Choose Winner --</option>
+                        <label class="text-[11px] text-slate-400 block mb-1 font-semibold uppercase tracking-wider">Team B Score</label>
+                        <input type="number" id="editScoreB" value="${m.scoreB}" placeholder="Score B" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E10600]">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-slate-400 block mb-1 font-semibold uppercase tracking-wider">Declared Winner</label>
+                        <select id="editWinner" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E10600]">
+                            <option value="">-- No Winner Yet --</option>
                             <option value="${m.teamA}" ${m.winner === m.teamA ? 'selected' : ''}>${m.teamA}</option>
                             <option value="${m.teamB}" ${m.winner === m.teamB ? 'selected' : ''}>${m.teamB}</option>
                         </select>
                     </div>
-                    <button onclick="saveMatchData()" class="w-full bg-[#E10600] hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition mt-2">Commit Telemetry</button>
+                    <button onclick="saveMatchData()" class="w-full bg-[#E10600] hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider uppercase transition mt-2">Commit Match Telemetry</button>
                 </div>
             `;
             document.getElementById('matchModal').classList.remove('hidden');
@@ -278,43 +271,61 @@
 
         function saveMatchData() {
             const m = matches[activeEditMatchId];
+            const newTeamA = document.getElementById('editTeamA').value;
+            const newTeamB = document.getElementById('editTeamB').value;
             const scoreA = document.getElementById('editScoreA').value;
             const scoreB = document.getElementById('editScoreB').value;
             const winner = document.getElementById('editWinner').value;
 
+            m.teamA = newTeamA;
+            m.teamB = newTeamB;
             m.scoreA = scoreA;
             m.scoreB = scoreB;
             m.winner = winner;
 
             // Cascade winner to next round slot if applicable
-            if (m.next && m.nextSlot && winner) {
-                matches[m.next][m.nextSlot] = winner;
+            if (m.next && m.nextSlot) {
+                const nextMatch = matches[m.next];
+                if (nextMatch) {
+                    nextMatch[m.nextSlot] = winner || `Winner ${m.label}`;
+                }
             }
 
+            saveState();
             closeMatchModal();
             renderBracket();
-            showToast("Match telemetry updated successfully!");
+            showToast("Match telemetry & advancement updated!");
         }
 
         function closeMatchModal() {
             document.getElementById('matchModal').classList.add('hidden');
         }
 
-        function toggleAdminModal() {
-            const modal = document.getElementById('adminModal');
-            modal.classList.toggle('hidden');
+        function openAdminModal() {
+            if (isAdmin) {
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('adminActiveView').classList.remove('hidden');
+            } else {
+                document.getElementById('loginView').classList.remove('hidden');
+                document.getElementById('adminActiveView').classList.add('hidden');
+                document.getElementById('passInput').value = '';
+            }
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
         }
 
         function authenticateAdmin() {
             const pass = document.getElementById('passInput').value;
             if (pass === 'admin123') {
                 isAdmin = true;
+                saveState();
                 document.getElementById('loginView').classList.add('hidden');
                 document.getElementById('adminActiveView').classList.remove('hidden');
-                document.getElementById('adminNavBtn').innerText = 'Admin Active ⚡';
-                toggleAdminModal();
                 renderBracket();
-                showToast("Admin access granted.");
+                showToast("Admin access authenticated successfully.");
             } else {
                 showToast("Incorrect passcode! Try 'admin123'");
             }
@@ -322,45 +333,31 @@
 
         function logoutAdmin() {
             isAdmin = false;
-            document.getElementById('loginView').classList.remove('hidden');
-            document.getElementById('adminActiveView').classList.add('hidden');
-            document.getElementById('adminNavBtn').innerText = 'Admin Control';
-            document.getElementById('passInput').value = '';
-            toggleAdminModal();
+            saveState();
+            closeAdminModal();
             renderBracket();
             showToast("Admin session locked.");
         }
 
-        function openSheetsModal() {
-            document.getElementById('sheetsModal').classList.toggle('hidden');
-        }
-
-        function syncGoogleSheets() {
-            const url = document.getElementById('csvUrlInput').value;
-            if (!url) {
-                showToast("Please enter a valid Google Sheets CSV URL.");
-                return;
+        function resetTournament() {
+            if (confirm("Are you sure you want to reset all match scores, winners, and team edits back to default?")) {
+                localStorage.removeItem('f1_tt_matches');
+                matches = JSON.parse(JSON.stringify(initialMatches));
+                saveState();
+                closeAdminModal();
+                renderBracket();
+                showToast("Tournament bracket reset to default.");
             }
-            fetch(url)
-                .then(res => res.text())
-                .then(csv => {
-                    showToast("Google Sheets data synced successfully!");
-                    openSheetsModal();
-                })
-                .catch(err => {
-                    showToast("Failed to fetch CSV. Ensure link is published to web as CSV.");
-                });
         }
 
         function showToast(msg) {
             const toast = document.createElement('div');
-            toast.className = "fixed bottom-5 right-5 bg-[#12161F] border border-[#1E2330] text-slate-100 text-xs px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 animate-bounce";
+            toast.className = "fixed bottom-5 right-5 bg-[#131722] border border-[#1E2330] text-slate-100 text-xs px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 animate-bounce";
             toast.innerHTML = `<span class="text-[#E10600] font-bold">⚡ PADDOCK:</span> ${msg}`;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
         }
 
-        // Initialize render on load
         window.onload = function() {
             renderBracket();
         }
