@@ -1,106 +1,369 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Table Tennis Knockout</title>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#f3f5ff;--card:#fff;--tx:#1b1f3b;--mut:#8a90b0;--bd:#e4e7f5}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:radial-gradient(circle at 10% 0%,#e9e6ff 0,transparent 40%),radial-gradient(circle at 95% 10%,#d9f5ff 0,transparent 35%),var(--bg);color:var(--tx);font-family:Inter,Arial,sans-serif;min-height:100%}
-header{padding:22px 24px 8px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-h1{margin:0;font:700 26px "Chakra Petch",Arial,sans-serif;letter-spacing:.04em;background:linear-gradient(90deg,#4f7cff,#8b5cf6,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent}
-.tools{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--mut)}
-.pill{padding:5px 10px;border-radius:99px;background:#fff;border:1px solid var(--bd)}
-label.btn{background:linear-gradient(90deg,#4f7cff,#8b5cf6);color:#fff;border-radius:99px;padding:8px 16px;font:600 12px Inter,Arial;cursor:pointer;box-shadow:0 4px 12px rgba(79,124,255,.3)}
-#hint{padding:0 24px;font-size:12px;color:var(--mut)}
-.board{display:flex;gap:20px;padding:16px 24px 28px;overflow-x:auto;align-items:stretch}
-.col{min-width:270px;display:flex;flex-direction:column;gap:12px;--c:#4f7cff}
-.col h2{margin:0;font:700 12px "Chakra Petch",Arial;text-transform:uppercase;letter-spacing:.14em;color:var(--c);display:flex;align-items:center;gap:8px}
-.col h2::after{content:"";flex:1;height:2px;background:var(--c);opacity:.25;border-radius:2px}
-.m{background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--c);border-radius:14px;padding:10px;box-shadow:0 6px 18px rgba(60,70,140,.07)}
-.id{font:700 11px "Chakra Petch",Arial;color:var(--c);margin-bottom:6px;letter-spacing:.1em}
-.row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;font-size:13px}
-.row+.row{margin-top:4px}
-.row.w{background:color-mix(in srgb,var(--c) 14%,white);font-weight:600}
-.row.ph .nm{color:var(--mut);font-style:italic}
-.nm{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:inherit;padding:2px 0;overflow:hidden;text-overflow:ellipsis}
-input.nm{border-bottom:1px dashed var(--bd);outline:0}
-input.nm:focus{border-bottom-color:var(--c)}
-input.s{width:40px;padding:5px 2px;text-align:center;border:1px solid var(--bd);border-radius:8px;background:#fafbff;font:700 13px "Chakra Petch",Arial;color:var(--tx)}
-input.s:focus{outline:2px solid var(--c);border-color:transparent}
-.sc{min-width:28px;text-align:center;font:700 14px "Chakra Petch",Arial;color:var(--c)}
-#champ{margin:4px 24px 0;padding:14px 18px;border-radius:16px;background:linear-gradient(90deg,#8b5cf6,#ec4899,#f59e0b);color:#fff;display:none;font:700 18px "Chakra Petch",Arial;box-shadow:0 8px 22px rgba(139,92,246,.3)}
-</style></head><body>
-<header><h1>🏓 TABLE TENNIS KNOCKOUT</h1>
-<div class="tools"><span class="pill" id="st">Connecting…</span>
-<label class="btn" id="dl" style="display:none">Download data.json</label>
-<label class="btn" id="impl" style="display:none">Import Excel<input type="file" id="f" accept=".xlsx" hidden></label></div></header>
-<div id="hint"></div>
-<div id="champ"></div>
-<div class="board" id="b"></div>
-<script>
-const T={1:"Nur Mohammad - Shipon",2:"Shefat - Nasrullah",3:"Nadim - Rasel",4:"Tawhaa - Siam",5:"Rupok - Rifat",6:"Taiabe Hasan Talash - Ridvi",7:"Jimin - Kaif",8:"Syed Abrar Sahriar - Joy Paul Arko",9:"Minhaj Mahin - Kawshik Debnath",10:"Mahmudul Hasan - Sharafatul Shihab",11:"Tanvir Shourav - Prottasha",12:"Tanziba Afrin - Tasin Tanha",13:"Swapnil Samundho - Muammar Tajoar Faiaz",14:"MD. Zamiul Hoque - Nabela Rahman",15:"Rafiu - Syed Wasiul Islam",16:"Abu Siam - Anay Kumar Sikdar",17:"Md Omar Faruq (Sadid) - Nujhat Nujaifa",18:"A.B.M Mehedi Hasan - Mobashshir Sobhan",19:"Mohaimen sir - Tanvir sir (Faculty)"};
-const t=i=>i+". "+T[i];
-const COL={"Round 1":"#4f7cff","Round 2":"#14b8a6","Quarterfinal":"#f59e0b","Semifinal":"#ec4899","Final":"#8b5cf6"};
-const M=[];
-for(let i=1;i<=8;i++)M.push(["Round 1","R1-"+i,t(i),t(19-i)]);
-M.push(["Round 1","R1-9",t(9),t(10)]);
-M.push(["Round 2","R2-1","Winner R1-6","Winner R1-9"],["Round 2","R2-2","Winner R1-7","Winner R1-8"],
-["Quarterfinal","QF1","Winner R1-1","Winner R2-1"],["Quarterfinal","QF2","Winner R1-4","Winner R1-5"],
-["Quarterfinal","QF3","Winner R1-2","Winner R2-2"],["Quarterfinal","QF4","Winner R1-3",t(19)],
-["Semifinal","SF1","Winner QF1","Winner QF2"],["Semifinal","SF2","Winner QF3","Winner QF4"],["Final","Final","Winner SF1","Winner SF2"]);
-let S={},N={},canWrite=false,ref=null;
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const isW=n=>/^Winner /.test(n);
-function slot(m,k){const raw=m[2+k];if(isW(raw))return res(raw);return N[m[1]+":"+k]??raw}
-function res(n){const id=n.slice(7),m=M.find(x=>x[1]===id);return winner(m)}
-function winner(m){const s=S[m[1]];if(!s||s[0]===""||s[1]===""||s[0]==null||s[1]==null||+s[0]===+s[1])return null;return +s[0]>+s[1]?slot(m,0):slot(m,1)}
-function render(){
- const cols={};M.forEach(m=>(cols[m[0]]=cols[m[0]]||[]).push(m));
- let h="";
- for(const r in cols){h+=`<div class="col" style="--c:${COL[r]}"><h2>${r}</h2>`;
-  for(const m of cols[r]){const w=winner(m),s=S[m[1]]||["",""];
-   const row=k=>{const raw=m[2+k],n=slot(m,k),ph=isW(raw)&&!n;
-    const name=(canWrite&&!isW(raw))?`<input class="nm" data-m="${m[1]}" data-k="${k}" data-t="n" value="${esc(n)}">`:`<span class="nm">${esc(n||raw)}</span>`;
-    const sc=canWrite?`<input class="s" type="number" min="0" data-m="${m[1]}" data-k="${k}" data-t="s" value="${esc(s[k]??"")}">`:`<b class="sc">${esc(s[k]??"")}</b>`;
-    return `<div class="row ${ph?"ph":""} ${w&&w===n?"w":""}">${name}${sc}</div>`};
-   h+=`<div class="m"><div class="id">${m[1]}</div>${row(0)}${row(1)}</div>`}
-  h+="</div>"}
- document.getElementById("b").innerHTML=h;
- const c=winner(M[M.length-1]),ch=document.getElementById("champ");
- ch.style.display=c?"block":"none";ch.textContent=c?"🏆 Champion: "+c:"";
-}
-async function save(){try{localStorage.setItem("bracket-draft",JSON.stringify({scores:S,names:N}));document.getElementById("st").textContent="Draft saved · download data.json & commit"}catch(x){}}
-document.getElementById("b").addEventListener("change",e=>{
- const d=e.target.dataset;if(!d.m||!ref)return;
- if(d.t==="s"){const s=(S[d.m]||["",""]).slice();s[d.k]=e.target.value;S={...S,[d.m]:s}}
- else{N={...N,[d.m+":"+d.k]:e.target.value.trim()}}
- render();save();
-});
-document.getElementById("f").addEventListener("change",async e=>{
- const f=e.target.files[0];if(!f||!ref)return;
- try{const wb=XLSX.read(await f.arrayBuffer());const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-  const ns={},nn={};rows.forEach(r=>{const m=M.find(x=>x[1]===r["Match"]);if(!m)return;
-   ns[m[1]]=[r["Score A"]??"",r["Score B"]??""];
-   [["Team A",0],["Team B",1]].forEach(([c,k])=>{const v=r[c];if(v&&!isW(m[2+k])&&!isW(String(v)))nn[m[1]+":"+k]=String(v)})});
-  S=ns;N=nn;render();await save();document.getElementById("st").textContent="Imported ✓"}
- catch(x){document.getElementById("st").textContent="Import failed"}
- e.target.value="";
-});
-render();
-document.getElementById("dl").onclick=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify({scores:S,names:N},null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=u;a.download="data.json";a.click();URL.revokeObjectURL(u)};
-(async()=>{
- const st=document.getElementById("st");
- canWrite=new URLSearchParams(location.search).has("edit");
- let d={};
- try{const r=await fetch("data.json?"+Date.now());if(r.ok)d=await r.json()}catch(e){}
- if(canWrite){try{const l=localStorage.getItem("bracket-draft");if(l)d=JSON.parse(l)}catch(e){}
-  ref=true;document.getElementById("impl").style.display="";document.getElementById("dl").style.display="";
-  document.getElementById("hint").textContent="Edit mode: click team names to change them, type scores. Then click Download data.json and upload it to your repo to publish for everyone.";
-  st.textContent="Editing (draft)"}
- else{st.textContent="Live";setInterval(async()=>{try{const r=await fetch("data.json?"+Date.now());if(r.ok){const x=await r.json();S=x.scores||{};N=x.names||{};render()}}catch(e){}},30000)}
- S=d.scores||{};N=d.names||{};render();
-})();
-</script></body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Paddock // Table Tennis Championship</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0E14;
+            color: #F8FAFC;
+        }
+        .font-mono-num {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar for horizontal tree scrolling */
+        ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0E14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E2330;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E10600;
+        }
+        .f1-card {
+            background: #12161F;
+            border: 1px solid #1E2330;
+            transition: all 0.2s ease;
+        }
+        .f1-card:hover {
+            border-color: rgba(225, 6, 0, 0.4);
+            box-shadow: 0 0 20px rgba(225, 6, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#E10600] selection:text-white">
+
+    <header class="border-b border-[#1E2330] bg-[#0B0E14]/90 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#E10600] text-white font-black px-3 py-1.5 rounded text-sm tracking-widest uppercase">F1 PADDOCK</div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                    TABLE TENNIS CHAMPIONSHIP <span class="text-xs font-normal text-slate-400 font-mono-num">2026.R19</span>
+                </h1>
+                <p class="text-xs text-slate-400">Official Knockout Tree & Live Telemetry</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button onclick="openSheetsModal()" class="bg-[#1E2330] hover:bg-slate-800 text-slate-300 px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border border-slate-700">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg>
+                Google Sheets Sync
+            </button>
+            <button onclick="toggleAdminModal()" id="adminNavBtn" class="bg-[#E10600] hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition shadow-lg shadow-red-900/30">
+                Admin Control
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 overflow-x-auto">
+        <div class="min-w-[1300px] pb-12">
+            <!-- Round Headers -->
+            <div class="grid grid-cols-5 gap-6 mb-6 text-center text-xs font-bold tracking-widest text-slate-400 uppercase">
+                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Round 1 <span class="text-[#E10600]">9 Matches</span></div>
+                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Playoffs <span class="text-[#E10600]">2 Matches</span></div>
+                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Quarter-finals <span class="text-[#E10600]">4 Matches</span></div>
+                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Semi-finals <span class="text-[#E10600]">2 Matches</span></div>
+                <div class="bg-[#12161F] py-2.5 rounded-lg border border-[#1E2330]">Grand Final 🏆 <span class="text-[#E10600]">1 Match</span></div>
+            </div>
+
+            <!-- Tournament Grid Columns -->
+            <div class="grid grid-cols-5 gap-6 items-center">
+                <!-- Column 1: Round 1 -->
+                <div class="space-y-3" id="col-r1"></div>
+                <!-- Column 2: Playoffs -->
+                <div class="space-y-16" id="col-po"></div>
+                <!-- Column 3: Quarter-finals -->
+                <div class="space-y-12" id="col-qf"></div>
+                <!-- Column 4: Semi-finals -->
+                <div class="space-y-32" id="col-sf"></div>
+                <!-- Column 5: Final -->
+                <div class="space-y-4" id="col-fn"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#12161F] border border-[#1E2330] rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="toggleAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+            <div id="loginView">
+                <h3 class="text-lg font-bold text-white mb-2">Paddock Admin Authentication</h3>
+                <p class="text-slate-400 text-xs mb-4">Enter master passcode to unlock match score and winner updates.</p>
+                <input type="password" id="passInput" placeholder="Enter password (admin123)" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#E10600] mb-4">
+                <button onclick="authenticateAdmin()" class="w-full bg-[#E10600] hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition">Authenticate</button>
+            </div>
+            <div id="adminActiveView" class="hidden">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <h3 class="text-lg font-bold text-white">Admin Mode Active</h3>
+                </div>
+                <p class="text-slate-300 text-xs mb-4">You can now click on any match card on the bracket to set scores or select winners. Changes cascade instantly through the knockout tree.</p>
+                <button onclick="logoutAdmin()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-lg text-sm transition">Lock Admin Mode</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sheetsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#12161F] border border-[#1E2330] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+            <button onclick="openSheetsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg>
+                Google Sheets Integration Guide
+            </h3>
+            <p class="text-slate-400 text-xs mb-4">Connect this web app to your live Google Sheet for automated score synchronization.</p>
+            
+            <div class="space-y-3 text-xs text-slate-300 mb-6">
+                <div class="bg-[#0B0E14] p-3 rounded-lg border border-[#1E2330]">
+                    <span class="font-bold text-[#E10600]">Step 1:</span> Create a Google Sheet with columns: <code class="text-emerald-400">MatchID, TeamA, TeamB, ScoreA, ScoreB, Winner</code>.
+                </div>
+                <div class="bg-[#0B0E14] p-3 rounded-lg border border-[#1E2330]">
+                    <span class="font-bold text-[#E10600]">Step 2:</span> Publish your sheet as CSV (`File > Share > Publish to web > CSV`).
+                </div>
+                <div class="bg-[#0B0E14] p-3 rounded-lg border border-[#1E2330]">
+                    <span class="font-bold text-[#E10600]">Step 3:</span> Paste your CSV URL below to sync live telemetry data on load.
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <input type="text" id="csvUrlInput" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <div class="flex gap-2">
+                    <button onclick="syncGoogleSheets()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs transition">Fetch Sheet Data</button>
+                    <button onclick="openSheetsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="matchModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#12161F] border border-[#1E2330] rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
+            <button onclick="closeMatchModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+            <h3 id="modalMatchTitle" class="text-base font-bold text-white mb-4">Edit Match Telemetry</h3>
+            <div id="modalMatchContent" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Tournament Matches Database State
+        const matches = {
+            // Round 1 (9 Matches)
+            'r1_1': { id: 'r1_1', round: 'r1', label: 'Match 1', date: 'Oct 10', teamA: 'Nur Mohammad - Shipon', teamB: 'Shefat - Nasrullah', scoreA: '', scoreB: '', winner: '', next: 'qf_1', nextSlot: 'teamA' },
+            'r1_2': { id: 'r1_2', round: 'r1', label: 'Match 2', date: 'Oct 10', teamA: 'Nadim - Rasel', teamB: 'Tawhaa - Siam', scoreA: '', scoreB: '', winner: '', next: 'qf_1', nextSlot: 'teamB' },
+            'r1_3': { id: 'r1_3', round: 'r1', label: 'Match 3', date: 'Oct 10', teamA: 'Rupok - Rifat', teamB: 'TAIABE HASAN TALASH - Ridvi', scoreA: '', scoreB: '', winner: '', next: 'qf_2', nextSlot: 'teamA' },
+            'r1_4': { id: 'r1_4', round: 'r1', label: 'Match 4', date: 'Oct 10', teamA: 'Jimin - Kaif', teamB: 'Syed Abrar Sahriar - Joy Paul Arko', scoreA: '', scoreB: '', winner: '', next: 'qf_2', nextSlot: 'teamB' },
+            'r1_5': { id: 'r1_5', round: 'r1', label: 'Match 5', date: 'Oct 10', teamA: 'Minhaj Mahin - Kawshik Debnath', teamB: 'Mahmudul Hasan - Sharafatul Shihab', scoreA: '', scoreB: '', winner: '', next: 'qf_3', nextSlot: 'teamA' },
+            'r1_6': { id: 'r1_6', round: 'r1', label: 'Match 6', date: 'Oct 11', teamA: 'Tanvir Shourav - Prottasha', teamB: 'Tanziba Afrin - Tasin Tanha', scoreA: '', scoreB: '', winner: '', next: 'po_a', nextSlot: 'teamA' },
+            'r1_7': { id: 'r1_7', round: 'r1', label: 'Match 7', date: 'Oct 11', teamA: 'Swapnil Samundho - Muammar Tajoar Faiaz', teamB: 'MD. Zamiul Hoque - Nabela Rahman', scoreA: '', scoreB: '', winner: '', next: 'po_a', nextSlot: 'teamB' },
+            'r1_8': { id: 'r1_8', round: 'r1', label: 'Match 8', date: 'Oct 11', teamA: 'Rafiu - Syed Wasiul Islam', teamB: 'Abu Siam - Anay Kumar Sikdar', scoreA: '', scoreB: '', winner: '', next: 'po_b', nextSlot: 'teamA' },
+            'r1_9': { id: 'r1_9', round: 'r1', label: 'Match 9', date: 'Oct 11', teamA: 'Md Omar Faruq (Sadid) - Nujhat Nujaifa', teamB: 'A.B.M Mehedi Hasan - Mobashshir Sobhan', scoreA: '', scoreB: '', winner: '', next: 'po_b', nextSlot: 'teamB' },
+
+            // Playoffs (Round 2 - 2 Matches)
+            'po_a': { id: 'po_a', round: 'po', label: 'Playoff A', date: 'Oct 12', teamA: 'Winner Match 6', teamB: 'Winner Match 7', scoreA: '', scoreB: '', winner: '', next: 'qf_3', nextSlot: 'teamB' },
+            'po_b': { id: 'po_b', round: 'po', label: 'Playoff B', date: 'Oct 12', teamA: 'Winner Match 8', teamB: 'Winner Match 9', scoreA: '', scoreB: '', winner: '', next: 'qf_4', nextSlot: 'teamA' },
+
+            // Quarter-finals (4 Matches)
+            'qf_1': { id: 'qf_1', round: 'qf', label: 'Quarter-final 1', date: 'Oct 14', teamA: 'Winner Match 1', teamB: 'Winner Match 2', scoreA: '', scoreB: '', winner: '', next: 'sf_1', nextSlot: 'teamA' },
+            'qf_2': { id: 'qf_2', round: 'qf', label: 'Quarter-final 2', date: 'Oct 14', teamA: 'Winner Match 3', teamB: 'Winner Match 4', scoreA: '', scoreB: '', winner: '', next: 'sf_1', nextSlot: 'teamB' },
+            'qf_3': { id: 'qf_3', round: 'qf', label: 'Quarter-final 3', date: 'Oct 14', teamA: 'Winner Match 5', teamB: 'Winner Playoff A', scoreA: '', scoreB: '', winner: '', next: 'sf_2', nextSlot: 'teamA' },
+            'qf_4': { id: 'qf_4', round: 'qf', label: 'Quarter-final 4 (Faculty)', date: 'Oct 14', teamA: 'Winner Playoff B', teamB: 'Mohaimen sir - Tanvir sir', scoreA: '', scoreB: '', winner: '', next: 'sf_2', nextSlot: 'teamB' },
+
+            // Semi-finals (2 Matches)
+            'sf_1': { id: 'sf_1', round: 'sf', label: 'Semi-final 1', date: 'Oct 16', teamA: 'Winner QF 1', teamB: 'Winner QF 2', scoreA: '', scoreB: '', winner: '', next: 'fn_1', nextSlot: 'teamA' },
+            'sf_2': { id: 'sf_2', round: 'sf', label: 'Semi-final 2', date: 'Oct 16', teamA: 'Winner QF 3', teamB: 'Winner QF 4', scoreA: '', scoreB: '', winner: '', next: 'fn_1', nextSlot: 'teamB' },
+
+            // Grand Final (1 Match)
+            'fn_1': { id: 'fn_1', round: 'fn', label: 'Grand Final 🏆', date: 'Oct 18', teamA: 'Winner SF 1', teamB: 'Winner SF 2', scoreA: '', scoreB: '', winner: '', next: null, nextSlot: null }
+        };
+
+        let isAdmin = false;
+        let activeEditMatchId = null;
+
+        function renderBracket() {
+            const columns = {
+                'r1': document.getElementById('col-r1'),
+                'po': document.getElementById('col-po'),
+                'qf': document.getElementById('col-qf'),
+                'sf': document.getElementById('col-sf'),
+                'fn': document.getElementById('col-fn')
+            };
+
+            Object.values(columns).forEach(col => col.innerHTML = '');
+
+            Object.values(matches).forEach(m => {
+                const card = document.createElement('div');
+                const isFinished = m.winner !== '';
+                const isFacultyMatch = m.id === 'qf_4';
+
+                card.className = `f1-card rounded-xl p-3.5 relative cursor-pointer ${isFacultyMatch ? 'border-amber-500/40 bg-gradient-to-r from-[#12161F] to-amber-950/20' : ''}`;
+                card.onclick = () => handleCardClick(m.id);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px] text-slate-400 mb-2 font-mono-num uppercase tracking-wider">
+                        <span>${m.date} // ${m.label}</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${isFinished ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-[#1E2330] text-slate-300'}">
+                            ${isFinished ? 'FT' : 'PENDING'}
+                        </span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="truncate pr-2 ${m.winner === m.teamA ? 'font-bold text-emerald-400' : 'text-slate-200'}">
+                                ${m.teamA || 'TBD'}
+                                ${isFacultyMatch && m.teamA.includes('Faculty') ? ' 🎓' : ''}
+                            </span>
+                            <span class="font-mono-num font-bold text-sm px-2 py-0.5 rounded bg-[#0B0E14] border border-[#1E2330] min-w-[28px] text-center">${m.scoreA !== '' ? m.scoreA : '-'}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="truncate pr-2 ${m.winner === m.teamB ? 'font-bold text-emerald-400' : 'text-slate-200'}">
+                                ${m.teamB || 'TBD'}
+                                ${m.teamB.includes('Mohaimen sir') ? ' 🎓' : ''}
+                            </span>
+                            <span class="font-mono-num font-bold text-sm px-2 py-0.5 rounded bg-[#0B0E14] border border-[#1E2330] min-w-[28px] text-center">${m.scoreB !== '' ? m.scoreB : '-'}</span>
+                        </div>
+                    </div>
+                    ${isAdmin ? `
+                        <div class="mt-2.5 pt-2 border-t border-[#1E2330] flex justify-between items-center text-[10px] text-[#E10600] font-bold">
+                            <span>[ EDIT TELEMETRY ]</span>
+                            <span>⚡</span>
+                        </div>
+                    ` : ''}
+                `;
+
+                if (columns[m.round]) {
+                    columns[m.round].appendChild(card);
+                }
+            });
+        }
+
+        function handleCardClick(matchId) {
+            if (!isAdmin) {
+                showToast("Switch to Admin Mode to update match scores and winners.");
+                return;
+            }
+            activeEditMatchId = matchId;
+            const m = matches[matchId];
+            document.getElementById('modalMatchTitle').innerText = `Edit: ${m.label}`;
+            
+            const content = document.getElementById('modalMatchContent');
+            content.innerHTML = `
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Team A: <span class="text-white font-medium">${m.teamA}</span></label>
+                        <input type="number" id="editScoreA" value="${m.scoreA}" placeholder="Score A" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#E10600]">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Team B: <span class="text-white font-medium">${m.teamB}</span></label>
+                        <input type="number" id="editScoreB" value="${m.scoreB}" placeholder="Score B" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#E10600]">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Select Winner</label>
+                        <select id="editWinner" class="w-full bg-[#0B0E14] border border-[#1E2330] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#E10600]">
+                            <option value="">-- Choose Winner --</option>
+                            <option value="${m.teamA}" ${m.winner === m.teamA ? 'selected' : ''}>${m.teamA}</option>
+                            <option value="${m.teamB}" ${m.winner === m.teamB ? 'selected' : ''}>${m.teamB}</option>
+                        </select>
+                    </div>
+                    <button onclick="saveMatchData()" class="w-full bg-[#E10600] hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition mt-2">Commit Telemetry</button>
+                </div>
+            `;
+            document.getElementById('matchModal').classList.remove('hidden');
+        }
+
+        function saveMatchData() {
+            const m = matches[activeEditMatchId];
+            const scoreA = document.getElementById('editScoreA').value;
+            const scoreB = document.getElementById('editScoreB').value;
+            const winner = document.getElementById('editWinner').value;
+
+            m.scoreA = scoreA;
+            m.scoreB = scoreB;
+            m.winner = winner;
+
+            // Cascade winner to next round slot if applicable
+            if (m.next && m.nextSlot && winner) {
+                matches[m.next][m.nextSlot] = winner;
+            }
+
+            closeMatchModal();
+            renderBracket();
+            showToast("Match telemetry updated successfully!");
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchModal').classList.add('hidden');
+        }
+
+        function toggleAdminModal() {
+            const modal = document.getElementById('adminModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function authenticateAdmin() {
+            const pass = document.getElementById('passInput').value;
+            if (pass === 'admin123') {
+                isAdmin = true;
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('adminActiveView').classList.remove('hidden');
+                document.getElementById('adminNavBtn').innerText = 'Admin Active ⚡';
+                toggleAdminModal();
+                renderBracket();
+                showToast("Admin access granted.");
+            } else {
+                showToast("Incorrect passcode! Try 'admin123'");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('adminActiveView').classList.add('hidden');
+            document.getElementById('adminNavBtn').innerText = 'Admin Control';
+            document.getElementById('passInput').value = '';
+            toggleAdminModal();
+            renderBracket();
+            showToast("Admin session locked.");
+        }
+
+        function openSheetsModal() {
+            document.getElementById('sheetsModal').classList.toggle('hidden');
+        }
+
+        function syncGoogleSheets() {
+            const url = document.getElementById('csvUrlInput').value;
+            if (!url) {
+                showToast("Please enter a valid Google Sheets CSV URL.");
+                return;
+            }
+            fetch(url)
+                .then(res => res.text())
+                .then(csv => {
+                    showToast("Google Sheets data synced successfully!");
+                    openSheetsModal();
+                })
+                .catch(err => {
+                    showToast("Failed to fetch CSV. Ensure link is published to web as CSV.");
+                });
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 right-5 bg-[#12161F] border border-[#1E2330] text-slate-100 text-xs px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 animate-bounce";
+            toast.innerHTML = `<span class="text-[#E10600] font-bold">⚡ PADDOCK:</span> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        // Initialize render on load
+        window.onload = function() {
+            renderBracket();
+        }
+    </script>
+</body>
+</html>
